@@ -54,6 +54,9 @@ Rules:
   background from your own knowledge.
 - Cite every factual sentence inline as [n], using the source numbers provided.
   A sentence with a fact and no citation is a defect.
+- The Sources section must list EVERY source you were given, numbered exactly as
+  provided, with title and URL — including sources you did not cite. Do not
+  renumber, reorder, or omit entries.
 - Every contradiction listed must appear in the report with both sides attributed.
 - State uncertainty plainly. If the sources are thin on a point, say so.
 - Do not pad. A short report backed by sources beats a long one that drifts."""
@@ -69,6 +72,8 @@ Return "revise" if ANY of these hold:
 - A contradiction in the notes is missing from the report, or is stated without
   attributing both sides.
 - A claim listed as unsupported appears in the report as fact.
+- The Sources section omits a provided source, renumbers them, or lists them in
+  a different order than given.
 - The report hedges so heavily it asserts nothing, or asserts confidently where
   the notes show only one weak source.
 
