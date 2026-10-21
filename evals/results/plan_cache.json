@@ -1,0 +1,138 @@
+{
+  "What are the main technical approaches to detecting model drift in production ML systems?": {
+    "sub_questions": [
+      {
+        "question": "What are the different types of model drift (data drift, concept drift, label drift) and how are they technically defined?",
+        "search_query": "data drift concept drift label drift definition ML monitoring"
+      },
+      {
+        "question": "What are the main statistical and algorithmic methods used to detect drift in production systems?",
+        "search_query": "model drift detection methods statistical tests Kolmogorov-Smirnov drift detection algorithms"
+      },
+      {
+        "question": "What are practical tools, frameworks, and implementations for drift detection in production ML?",
+        "search_query": "drift detection tools production ML Evidently AI monitoring frameworks"
+      },
+      {
+        "question": "What are the limitations and challenges of current drift detection approaches?",
+        "search_query": "model drift detection challenges limitations false positives production systems"
+      },
+      {
+        "question": "What are recent advances and emerging techniques in drift detection?",
+        "search_query": "recent advances model drift detection 2023 2024 deep learning approaches"
+      }
+    ]
+  },
+  "How does QLoRA compare to full fine-tuning in downstream task performance?": {
+    "sub_questions": [
+      {
+        "question": "What are the key technical differences between QLoRA and full fine-tuning?",
+        "search_query": "QLoRA vs full fine-tuning technical differences mechanism"
+      },
+      {
+        "question": "What do benchmark results show about QLoRA vs full fine-tuning performance on downstream tasks?",
+        "search_query": "QLoRA full fine-tuning benchmark results downstream task performance comparison"
+      },
+      {
+        "question": "What are the computational efficiency trade-offs between QLoRA and full fine-tuning?",
+        "search_query": "QLoRA full fine-tuning memory efficiency speed comparison"
+      },
+      {
+        "question": "What limitations or criticisms exist regarding QLoRA's effectiveness compared to full fine-tuning?",
+        "search_query": "QLoRA limitations drawbacks full fine-tuning performance gaps"
+      },
+      {
+        "question": "What recent research has evaluated QLoRA performance on specific downstream tasks?",
+        "search_query": "QLoRA downstream tasks evaluation 2024 2023 performance results"
+      }
+    ]
+  },
+  "What is the evidence that retrieval-augmented generation reduces hallucination?": {
+    "sub_questions": [
+      {
+        "question": "What is retrieval-augmented generation and how does it mechanistically reduce hallucinations?",
+        "search_query": "retrieval-augmented generation RAG mechanism hallucination reduction how it works"
+      },
+      {
+        "question": "What empirical benchmarks and studies quantify hallucination reduction with RAG?",
+        "search_query": "RAG retrieval-augmented generation hallucination benchmark evaluation results metrics"
+      },
+      {
+        "question": "What are the limitations and cases where RAG does not effectively reduce hallucinations?",
+        "search_query": "RAG retrieval-augmented generation limitations failures hallucination still occurs"
+      },
+      {
+        "question": "What recent research advances address hallucinations in RAG systems?",
+        "search_query": "RAG hallucination 2024 2023 recent improvements mitigation techniques"
+      }
+    ]
+  },
+  "What are the documented failure modes of LLM-as-a-judge evaluation?": {
+    "sub_questions": [
+      {
+        "question": "What are the specific failure modes and limitations of using LLMs as judges for evaluating other LLMs?",
+        "search_query": "LLM-as-a-judge failure modes limitations evaluation"
+      },
+      {
+        "question": "What empirical evidence exists showing where LLM judges make incorrect or biased evaluations?",
+        "search_query": "LLM judge bias errors benchmark evaluation study"
+      },
+      {
+        "question": "How do LLM judges perform on specific tasks like preference ranking and what are their documented errors?",
+        "search_query": "LLM judge preference ranking accuracy failure cases"
+      },
+      {
+        "question": "What are the known issues with position bias, length bias, and other systematic biases in LLM evaluation?",
+        "search_query": "LLM judge position bias length bias systematic errors"
+      },
+      {
+        "question": "What recent research has identified problems with LLM-based evaluation and proposed solutions?",
+        "search_query": "LLM evaluation reliability issues 2023 2024 research"
+      }
+    ]
+  },
+  "Does chain-of-thought prompting improve arithmetic reasoning accuracy for small models?": {
+    "sub_questions": [
+      {
+        "question": "What is chain-of-thought prompting and how does it work mechanistically?",
+        "search_query": "chain-of-thought prompting mechanism how it works"
+      },
+      {
+        "question": "What empirical evidence shows chain-of-thought improves arithmetic reasoning in small language models?",
+        "search_query": "chain-of-thought arithmetic reasoning small models benchmark results"
+      },
+      {
+        "question": "Are there limitations or cases where chain-of-thought fails to improve small model arithmetic performance?",
+        "search_query": "chain-of-thought prompting limitations failures small models arithmetic"
+      },
+      {
+        "question": "How does chain-of-thought performance scale with model size for math reasoning tasks?",
+        "search_query": "chain-of-thought scaling model size arithmetic reasoning performance"
+      }
+    ]
+  },
+  "What are the tradeoffs between pure vector search and hybrid search for enterprise retrieval?": {
+    "sub_questions": [
+      {
+        "question": "What are the technical differences and mechanisms between pure vector search and hybrid search approaches?",
+        "search_query": "vector search vs hybrid search technical differences mechanisms"
+      },
+      {
+        "question": "What are the performance and accuracy tradeoffs between vector search and hybrid search in enterprise retrieval systems?",
+        "search_query": "vector search hybrid search performance accuracy benchmark enterprise retrieval"
+      },
+      {
+        "question": "What are the computational cost and latency implications of each approach?",
+        "search_query": "vector search hybrid search computational cost latency scalability enterprise"
+      },
+      {
+        "question": "What are the practical considerations for implementing each approach in enterprise environments?",
+        "search_query": "hybrid search vector search implementation enterprise requirements infrastructure"
+      },
+      {
+        "question": "What recent developments or best practices have emerged for choosing between these approaches?",
+        "search_query": "hybrid search vector search best practices 2024 when to use"
+      }
+    ]
+  }
+}

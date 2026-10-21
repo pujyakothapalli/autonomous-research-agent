@@ -46,6 +46,7 @@ WRITER_SYSTEM = """You write research reports in Markdown from verified claims.
 Structure:
 ## Summary
 ## Findings
+### <one sub-heading per theme>
 ## Contradictions and Open Questions
 ## Sources
 
@@ -54,16 +55,31 @@ Rules:
   background from your own knowledge.
 - Cite every factual sentence inline as [n], using the source numbers provided.
   A sentence with a fact and no citation is a defect.
+- Use ### sub-headings inside Findings. Never use a bold line as a heading: a
+  line that is entirely bold is ambiguous between a heading and a sentence.
 - The Sources section must list EVERY source you were given, numbered exactly as
   provided, with title and URL — including sources you did not cite. Do not
   renumber, reorder, or omit entries.
 - Every contradiction listed must appear in the report with both sides attributed.
 - State uncertainty plainly. If the sources are thin on a point, say so.
-- Do not pad. A short report backed by sources beats a long one that drifts."""
+- Do not pad. A short report backed by sources beats a long one that drifts.
+- Summary and topic sentences assert facts too. If a sentence opens a section
+  by stating what is true, it carries citations like any other.
+- When revising, fix only what the reviewer raised. Do not introduce new
+  claims, new framing sentences, or new summary statements.
+- When a previous draft and reviewer issues are supplied, you are editing, not
+  rewriting. Reproduce the draft with the named issues fixed and everything else
+  byte-identical. A revision that changes sentences the reviewer did not raise is
+  a failure, even if those sentences improve."""
 
 CRITIC_SYSTEM = """You review a research report against the verification notes it
 was built from. You are the last check before the report is released, and a
 rubber-stamp review is worse than no review.
+
+The Sources section is a complete manifest, not a bibliography. It must list
+every source the writer was given, including ones the report never cites. An
+uncited source appearing in the Sources list is CORRECT and must never be raised
+as an issue.
 
 Return "revise" if ANY of these hold:
 - A factual sentence has no citation.
@@ -72,8 +88,8 @@ Return "revise" if ANY of these hold:
 - A contradiction in the notes is missing from the report, or is stated without
   attributing both sides.
 - A claim listed as unsupported appears in the report as fact.
-- The Sources section omits a provided source, renumbers them, or lists them in
-  a different order than given.
+- The Sources section omits a provided source, renumbers them, or reorders them.
+- A bold line is used as a heading instead of a ### sub-heading.
 - The report hedges so heavily it asserts nothing, or asserts confidently where
   the notes show only one weak source.
 
@@ -83,7 +99,6 @@ Each issue must be concrete and actionable: name the sentence or claim and what
 is wrong with it. "Needs more detail" is not an issue. "The second paragraph of
 Findings states a 40% improvement citing [3], but [3] is not among the sources
 supporting that claim" is."""
-
 
 # --- Config ---
 
@@ -213,8 +228,15 @@ def make_writer():
         feedback = ""
         review = state.get("review")
         if review and review.verdict == "revise":
-            feedback = "\n\nFIX THESE ISSUES FROM THE PREVIOUS DRAFT:\n" + "\n".join(
-                f"- {issue}" for issue in review.issues
+            feedback = (
+                "\n\n" + "=" * 60 + "\nPREVIOUS DRAFT:\n\n"
+                + state["report"]
+                + "\n\n" + "=" * 60 + "\nISSUES THE REVIEWER RAISED:\n"
+                + "\n".join(f"- {issue}" for issue in review.issues)
+                + "\n\nReturn the previous draft with ONLY these issues fixed. "
+                "Keep every other sentence exactly as it stands. Do not add "
+                "sentences, do not reorder sections, do not reword anything "
+                "the reviewer did not raise."
             )
 
         message = llm.invoke(
@@ -234,6 +256,7 @@ def make_writer():
         draft_count = state.get("draft_count", 0) + 1
         return {
             "report": message.content,
+            "drafts": [message.content],
             "draft_count": draft_count,
             "trace": [f"write: draft {draft_count}"],
         }
@@ -256,6 +279,7 @@ def make_critic():
         )
         return {
             "review": result,
+            "reviews": [result],
             "trace": [f"critique: {result.verdict} ({len(result.issues)} issues)"],
         }
 
@@ -263,24 +287,41 @@ def make_critic():
 
 
 def make_finalizer():
-    """Appends unresolved critic issues to the report instead of hiding them."""
+    """Releases the report, with unresolved critic issues made visible.
+
+    When the loop exhausts without the critic accepting, the last draft is not
+    the best one — a chain the critic kept rejecting is evidence of thrashing,
+    not improvement. Ship the draft the critic rated best and say so.
+    """
 
     def finalize(state: ResearchState) -> dict:
         review = state.get("review")
         if not review or review.verdict == "accept":
             return {"trace": ["finalize: accepted clean"]}
 
-        caveats = "\n".join(f"- {issue}" for issue in review.issues)
-        report = (
-            f"{state['report']}\n\n"
-            f"---\n\n"
-            f"## Unresolved Review Issues\n\n"
-            f"The revision budget was exhausted with these problems outstanding. "
-            f"Treat the affected claims with caution.\n\n{caveats}\n"
-        )
+        drafts = state.get("drafts", [])
+        reviews = state.get("reviews", [])
+
+        best = 0
+        if reviews and len(drafts) == len(reviews):
+            best = min(range(len(reviews)), key=lambda i: len(reviews[i].issues))
+
+        report = drafts[best] if drafts else state["report"]
+        issues = reviews[best].issues if reviews else review.issues
+        caveats = "\n".join(f"- {i}" for i in issues)
+
         return {
-            "report": report,
-            "trace": [f"finalize: released with {len(review.issues)} unresolved issues"],
+            "report": (
+                f"{report}\n\n---\n\n## Unresolved Review Issues\n\n"
+                f"The revision budget was exhausted without the reviewer "
+                f"accepting. Draft {best + 1} of {len(drafts)} is released as "
+                f"the one with the fewest outstanding issues. Treat the "
+                f"affected claims with caution.\n\n{caveats}\n"
+            ),
+            "trace": [
+                f"finalize: released draft {best + 1}/{len(drafts)} "
+                f"with {len(issues)} unresolved issues"
+            ],
         }
 
     return finalize

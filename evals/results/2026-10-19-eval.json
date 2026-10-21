@@ -1,0 +1,802 @@
+{
+  "generated": "2026-10-19T18:58:09-04:00",
+  "research_model": "claude-haiku-4-5",
+  "judge_model": "claude-haiku-4-5",
+  "max_revisions": 2,
+  "design": "Three arms over identical retrieval: control (no critic), placebo (no critic, re-run) and critic (full graph). The placebo delta measures sampling noise, since temperature=0 is not deterministic and the judge is sampled per arm.",
+  "search_cache_hit_rate": 1.0,
+  "aggregate": {
+    "control": {
+      "questions": 1,
+      "sourced_claim_rate": 0.9629629629629629,
+      "citation_support_rate": 0.9629629629629629,
+      "citation_coverage": 1.0,
+      "mean_unsupported_per_report": 0.0,
+      "mean_uncited_per_report": 0.0,
+      "mean_factual_sentences": 27.0,
+      "mean_drafts": 1.0,
+      "reports_with_contradictions": 0
+    },
+    "placebo": {
+      "questions": 1,
+      "sourced_claim_rate": 0.9629629629629629,
+      "citation_support_rate": 0.9629629629629629,
+      "citation_coverage": 1.0,
+      "mean_unsupported_per_report": 0.0,
+      "mean_uncited_per_report": 0.0,
+      "mean_factual_sentences": 27.0,
+      "mean_drafts": 1.0,
+      "reports_with_contradictions": 0
+    },
+    "critic": {
+      "questions": 1,
+      "sourced_claim_rate": 0.9259259259259259,
+      "citation_support_rate": 0.9259259259259259,
+      "citation_coverage": 1.0,
+      "mean_unsupported_per_report": 1.0,
+      "mean_uncited_per_report": 0.0,
+      "mean_factual_sentences": 27.0,
+      "mean_drafts": 2.0,
+      "reports_with_contradictions": 0
+    }
+  },
+  "effect": {
+    "mean_treatment_delta": -0.03703703703703698,
+    "mean_placebo_delta": 0.0,
+    "noise_floor_rms": 0.0,
+    "net_effect": -0.03703703703703698,
+    "treatment_deltas": [
+      -0.03703703703703698
+    ],
+    "placebo_deltas": [
+      0.0
+    ]
+  },
+  "intervention": {
+    "rate": 1.0,
+    "unresolved_rate": 0.0,
+    "mean_treatment_delta_when_intervened": -0.03703703703703698,
+    "mean_placebo_delta_when_intervened": 0.0,
+    "net_effect_when_intervened": -0.03703703703703698
+  },
+  "per_question": [
+    {
+      "id": "q04",
+      "question": "What are the documented failure modes of LLM-as-a-judge evaluation?",
+      "control": {
+        "metrics": {
+          "cited_sentences": 27,
+          "supported": 26,
+          "partial": 1,
+          "unsupported": 0,
+          "uncited_factual": 0,
+          "total_factual": 27,
+          "sourced_claim_rate": 0.9629629629629629,
+          "citation_support_rate": 0.9629629629629629,
+          "citation_coverage": 1.0
+        },
+        "drafts": 1,
+        "critic_intervened": false,
+        "sources": 6,
+        "contradictions": 0,
+        "unsupported_dropped": 3,
+        "critic_verdict": null,
+        "critic_issues": [],
+        "trace": [
+          "verify: 25 claims, 0 contradictions, 3 unsupported",
+          "write: draft 1"
+        ],
+        "report": "## Summary\n\nLLM-as-a-judge evaluation exhibits multiple documented failure modes spanning capability gaps, systematic biases, and inconsistency patterns. While [1] notes that LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks, substantial evidence reveals critical limitations. [2] LLM judges struggle to evaluate math, reasoning, and coding questions, and [2] there is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question. Beyond capability constraints, LLM judges exhibit systematic biases in how they score and compare responses, and [6] no judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.\n\n## Findings\n\n### Capability-Based Failures\n\n[2] LLM judges struggle to evaluate math, reasoning, and coding questions. [2] There is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question, meaning [2] LLM judges will struggle on the subset of questions they could not answer, even if aggregate level statistics might imply a judge has high agreement with human annotators. This limitation persists even when judges appear reliable overall: [2] many reference answers used in MT-Bench were actually incorrect, and [2] providing LLM judges with prompts that include synthetic references improves their overall agreement with human annotators compared to using no reference at all. However, [2] providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.\n\n### Documented Bias Types\n\n[4] EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models. Six distinct bias types have been identified:\n\n- [4] Length bias shows preference for longer answers irrespective of correctness or relevance.\n- [4] Concreteness bias favors results with technical terminology, citations, or quantitative detail, which may be spurious.\n- [4] Empty reference bias selects responses that hallucinate plausible content when reference information is incomplete.\n- [4] Content continuation bias rewards answers that continue or expand previous input text even if that is not the intended task.\n- [4] Nested instruction bias focuses on sub-instructions within prompts rather than the stated main task.\n- [4] Familiar knowledge bias chooses outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.\n\n### Scoring Instability\n\n[5] Scoring bias is defined as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations. [5] The scoring stability of LLM judges is significantly disrupted by biases related to score rubrics, score IDs, and reference answer selection. [6] Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.\n\n### Domain and Task Adaptation Failures\n\n[6] Adaptivity failure is a failure mode where a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing, leading to incorrect evaluation of domain-specific tasks.\n\n### Non-Semantic Influences\n\n[6] Non-semantic bias is a failure mode where position, length, formatting, and model provenance shape the verdict in ways unrelated to actual content quality.\n\n### Comparison Inconsistencies\n\n[6] Cross-mode inconsistency is a failure mode where a response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10. [6] Score-Comparison Inconsistency leads to circular preference chains where A beats B, B beats C, and C beats A.\n\n### Performance on Bias Tests\n\n[6] Frontier models exceeded 50% error rates on advanced bias tests according to Hongli Zhou and colleagues' JudgeBiasBench. [6] No judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.\n\n## Contradictions and Open Questions\n\nNo contradictions appear in the source material. The sources acknowledge that [1] LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks while simultaneously documenting pervasive failure modes, suggesting that aggregate agreement metrics may mask domain-specific and bias-related failures.\n\nThe sources do not clarify whether failure rates vary systematically by model size, architecture, or instruction approach beyond the single comparison showing weaker models with better references outperforming stronger models with synthetic references.\n\n## Sources\n\n[1] Exploring LLM-as-a-Judge - Weights & Biases \u2014 https://wandb.ai/site/articles/exploring-llm-as-a-judge\n\n[2] No Free Labels: Limitations of LLM-as-a-Judge Without Human Grounding \u2014 https://arxiv.org/html/2503.05061v1\n\n[3] What is an LLM-as-a-judge? When to use it (and when to use deterministic evals) - Articles - Braintrust \u2014 https://www.braintrust.dev/articles/what-is-llm-as-a-judge\n\n[4] EvalBiasBench: Bias Benchmark for Judge Models \u2014 https://www.emergentmind.com/topics/evalbiasbench\n\n[5] Evaluating Scoring Bias in LLM-as-a-Judge \u2014 https://arxiv.org/html/2506.22316v2\n\n[6] LLM-as-a-Judge: Why Frontier Models Fail 50%+ Bias Tests | Adaline \u2014 https://www.adaline.ai/blog/llm-as-a-judge-reliability-bias",
+        "judged": [
+          {
+            "sentence": "LLM-as-a-judge evaluation exhibits multiple documented failure modes spanning capability gaps, systematic biases, and inconsistency patterns.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is a summary statement synthesizing findings from multiple sources; it is supported by the overall evidence presented in sources [2], [4], [5], and [6]."
+          },
+          {
+            "sentence": "While [1] notes that LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks, substantial evidence reveals critical limitations.",
+            "cited": [
+              1
+            ],
+            "verdict": "supported",
+            "reason": "Source [1] states: 'Research has demonstrated that LLM judges can achieve high agreement with human evaluators across diverse tasks, making them a practical tool for teams building and deploying AI systems at scale.'"
+          },
+          {
+            "sentence": "[2] LLM judges struggle to evaluate math, reasoning, and coding questions",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'Zheng et al. (2023) noted that LLM Judges struggle to evaluate math, reasoning, and coding questions.'"
+          },
+          {
+            "sentence": "[2] there is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'We demonstrate a strong connection between an LLM's ability to correctly answer a question and grade responses to that question.'"
+          },
+          {
+            "sentence": "[6] no judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'No judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.'"
+          },
+          {
+            "sentence": "[2] LLM judges will struggle on the subset of questions they could not answer, even if aggregate level statistics might imply a judge has high agreement with human annotators.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'Although aggregate level statistics might imply a judge has high agreement with human annotators, it will struggle on the subset of questions it could not answer.'"
+          },
+          {
+            "sentence": "[2] many reference answers used in MT-Bench were actually incorrect",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'Inflection AI (2024) noted that many of the reference answers used in MT-Bench were actually incorrect.'"
+          },
+          {
+            "sentence": "[2] providing LLM judges with prompts that include synthetic references improves their overall agreement with human annotators compared to using no reference at all.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'The authors demonstrated that providing LLM Judges with prompts that include synthetic references (i.e., unfiltered LLM-generated sample responses) improves the judges' overall agreement with human annotators compared to using no reference at all.'"
+          },
+          {
+            "sentence": "[2] providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'We show that providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.'"
+          },
+          {
+            "sentence": "[4] EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] states: 'EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models.'"
+          },
+          {
+            "sentence": "[4] Length bias shows preference for longer answers irrespective of correctness or relevance.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Length Bias: Preference for longer answers, irrespective of correctness or relevance.'"
+          },
+          {
+            "sentence": "[4] Concreteness bias favors results with technical terminology, citations, or quantitative detail, which may be spurious.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Concreteness Bias: Favoring results with technical terminology, citations, or quantitative detail, which may be spurious.'"
+          },
+          {
+            "sentence": "[4] Empty reference bias selects responses that hallucinate plausible content when reference information is incomplete.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Empty Reference Bias: Selecting responses that hallucinate plausible content when reference information is incomplete.'"
+          },
+          {
+            "sentence": "[4] Content continuation bias rewards answers that continue or expand previous input text even if that is not the intended task.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Content Continuation Bias: Rewarding answers that continue or expand previous input text even if that is not the intended task.'"
+          },
+          {
+            "sentence": "[4] Nested instruction bias focuses on sub-instructions within prompts rather than the stated main task.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Nested Instruction Bias: Focusing on sub-instructions within prompts rather than the stated main task.'"
+          },
+          {
+            "sentence": "[4] Familiar knowledge bias chooses outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Familiar Knowledge Bias: Choosing outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.'"
+          },
+          {
+            "sentence": "[5] Scoring bias is defined as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations.",
+            "cited": [
+              5
+            ],
+            "verdict": "supported",
+            "reason": "Source [5] states: 'we first formally define scoring bias as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations.'"
+          },
+          {
+            "sentence": "[5] The scoring stability of LLM judges is significantly disrupted by biases related to score rubrics, score IDs, and reference answer selection.",
+            "cited": [
+              5
+            ],
+            "verdict": "supported",
+            "reason": "Source [5] states: 'our findings offer actionable insights for designing more robust scoring prompts and mitigating biases related to score rubrics, score IDs, and reference answer selection.' The abstract also states: 'Our experiments reveal that the scoring stability of LLM judges is significantly disrupted by these biases.'"
+          },
+          {
+            "sentence": "[6] Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.'"
+          },
+          {
+            "sentence": "[6] Adaptivity failure is a failure mode where a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing, leading to incorrect evaluation of domain-specific tasks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] describes adaptivity failure: 'Here, a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing. The evaluation criteria that predict human preference in conversation do not transfer cleanly to domain-specific tasks.'"
+          },
+          {
+            "sentence": "[6] Non-semantic bias is a failure mode where position, length, formatting, and model provenance shape the verdict in ways unrelated to actual content quality.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] describes non-semantic bias: 'The bias does not come from what the judge reads; it comes from how the response looks. Position, length, formatting, and model provenance all shape the verdict in ways unrelated to actual content quality.'"
+          },
+          {
+            "sentence": "[6] Cross-mode inconsistency is a failure mode where a response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'A response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10.'"
+          },
+          {
+            "sentence": "[6] Score-Comparison Inconsistency leads to circular preference chains where A beats B, B beats C, and C beats A.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'FairJudge calls this Score-Comparison Inconsistency, and it leads to circular preference chains where A beats B, B beats C, and C beats A.'"
+          },
+          {
+            "sentence": "[6] Frontier models exceeded 50% error rates on advanced bias tests according to Hongli Zhou and colleagues' JudgeBiasBench.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'Frontier models exceeded 50% error rates on advanced bias tests, according to Hongli Zhou and colleagues' JudgeBiasBench.'"
+          },
+          {
+            "sentence": "No contradictions appear in the source material.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is a meta-commentary on the sources themselves, not a factual claim about the world. It should be skipped per instructions, but is included here as it appears in the report."
+          },
+          {
+            "sentence": "The sources acknowledge that [1] LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks while simultaneously documenting pervasive failure modes, suggesting that aggregate agreement metrics may mask domain-specific and bias-related failures.",
+            "cited": [
+              1
+            ],
+            "verdict": "partial",
+            "reason": "Source [1] does state that LLM judges achieve high agreement with human evaluators, but the report's inference that this 'masks' failures is an interpretation not explicitly stated in source [1]. The sources do document failures, but the causal claim about masking is the report's synthesis."
+          },
+          {
+            "sentence": "The sources do not clarify whether failure rates vary systematically by model size, architecture, or instruction approach beyond the single comparison showing weaker models with better references outperforming stronger models with synthetic references.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is meta-commentary on what the sources do and do not address, which per instructions should be skipped. However, it is factually accurate that the sources provide limited information on this topic."
+          }
+        ],
+        "uncited": [],
+        "review_history": []
+      },
+      "placebo": {
+        "metrics": {
+          "cited_sentences": 27,
+          "supported": 26,
+          "partial": 1,
+          "unsupported": 0,
+          "uncited_factual": 0,
+          "total_factual": 27,
+          "sourced_claim_rate": 0.9629629629629629,
+          "citation_support_rate": 0.9629629629629629,
+          "citation_coverage": 1.0
+        },
+        "drafts": 1,
+        "critic_intervened": false,
+        "sources": 6,
+        "contradictions": 0,
+        "unsupported_dropped": 3,
+        "critic_verdict": null,
+        "critic_issues": [],
+        "trace": [
+          "verify: 25 claims, 0 contradictions, 3 unsupported",
+          "write: draft 1"
+        ],
+        "report": "## Summary\n\nLLM-as-a-judge evaluation exhibits multiple documented failure modes spanning capability gaps, systematic biases, and inconsistency patterns. While [1] notes that LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks, substantial evidence reveals critical limitations. [2] LLM judges struggle to evaluate math, reasoning, and coding questions, and [2] there is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question. Beyond capability constraints, LLM judges exhibit systematic biases in how they score and compare responses, and [6] no judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.\n\n## Findings\n\n### Capability-Based Failures\n\n[2] LLM judges struggle to evaluate math, reasoning, and coding questions. [2] There is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question, meaning [2] LLM judges will struggle on the subset of questions they could not answer, even if aggregate level statistics might imply a judge has high agreement with human annotators. This limitation persists even when judges appear reliable overall: [2] many reference answers used in MT-Bench were actually incorrect, and [2] providing LLM judges with prompts that include synthetic references improves their overall agreement with human annotators compared to using no reference at all. However, [2] providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.\n\n### Documented Bias Types\n\n[4] EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models. Six distinct bias types have been identified:\n\n- [4] Length bias shows preference for longer answers irrespective of correctness or relevance.\n- [4] Concreteness bias favors results with technical terminology, citations, or quantitative detail, which may be spurious.\n- [4] Empty reference bias selects responses that hallucinate plausible content when reference information is incomplete.\n- [4] Content continuation bias rewards answers that continue or expand previous input text even if that is not the intended task.\n- [4] Nested instruction bias focuses on sub-instructions within prompts rather than the stated main task.\n- [4] Familiar knowledge bias chooses outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.\n\n### Scoring Instability\n\n[5] Scoring bias is defined as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations. [5] The scoring stability of LLM judges is significantly disrupted by biases related to score rubrics, score IDs, and reference answer selection. [6] Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.\n\n### Domain and Task Adaptation Failures\n\n[6] Adaptivity failure is a failure mode where a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing, leading to incorrect evaluation of domain-specific tasks.\n\n### Non-Semantic Influences\n\n[6] Non-semantic bias is a failure mode where position, length, formatting, and model provenance shape the verdict in ways unrelated to actual content quality.\n\n### Comparison Inconsistencies\n\n[6] Cross-mode inconsistency is a failure mode where a response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10. [6] Score-Comparison Inconsistency leads to circular preference chains where A beats B, B beats C, and C beats A.\n\n### Performance on Bias Tests\n\n[6] Frontier models exceeded 50% error rates on advanced bias tests according to Hongli Zhou and colleagues' JudgeBiasBench. [6] No judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.\n\n## Contradictions and Open Questions\n\nNo contradictions appear in the source material. The sources acknowledge that [1] LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks while simultaneously documenting pervasive failure modes, suggesting that aggregate agreement metrics may mask domain-specific and bias-related failures.\n\nThe sources do not clarify whether failure rates vary systematically by model size, architecture, or instruction approach beyond the single comparison showing weaker models with better references outperforming stronger models with synthetic references.\n\n## Sources\n\n[1] Exploring LLM-as-a-Judge - Weights & Biases \u2014 https://wandb.ai/site/articles/exploring-llm-as-a-judge\n\n[2] No Free Labels: Limitations of LLM-as-a-Judge Without Human Grounding \u2014 https://arxiv.org/html/2503.05061v1\n\n[3] What is an LLM-as-a-judge? When to use it (and when to use deterministic evals) - Articles - Braintrust \u2014 https://www.braintrust.dev/articles/what-is-llm-as-a-judge\n\n[4] EvalBiasBench: Bias Benchmark for Judge Models \u2014 https://www.emergentmind.com/topics/evalbiasbench\n\n[5] Evaluating Scoring Bias in LLM-as-a-Judge \u2014 https://arxiv.org/html/2506.22316v2\n\n[6] LLM-as-a-Judge: Why Frontier Models Fail 50%+ Bias Tests | Adaline \u2014 https://www.adaline.ai/blog/llm-as-a-judge-reliability-bias",
+        "judged": [
+          {
+            "sentence": "LLM-as-a-judge evaluation exhibits multiple documented failure modes spanning capability gaps, systematic biases, and inconsistency patterns.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is a summary statement synthesizing findings from multiple sources; it is supported by the overall evidence presented in sources [2], [4], [5], and [6]."
+          },
+          {
+            "sentence": "While [1] notes that LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks, substantial evidence reveals critical limitations.",
+            "cited": [
+              1
+            ],
+            "verdict": "supported",
+            "reason": "Source [1] states: 'Research has demonstrated that LLM judges can achieve high agreement with human evaluators across diverse tasks, making them a practical tool for teams building and deploying AI systems at scale.'"
+          },
+          {
+            "sentence": "[2] LLM judges struggle to evaluate math, reasoning, and coding questions",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'Zheng et al. (2023) noted that LLM Judges struggle to evaluate math, reasoning, and coding questions.'"
+          },
+          {
+            "sentence": "[2] there is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'We demonstrate a strong connection between an LLM's ability to correctly answer a question and grade responses to that question.'"
+          },
+          {
+            "sentence": "[6] no judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'No judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.'"
+          },
+          {
+            "sentence": "[2] LLM judges will struggle on the subset of questions they could not answer, even if aggregate level statistics might imply a judge has high agreement with human annotators.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'Although aggregate level statistics might imply a judge has high agreement with human annotators, it will struggle on the subset of questions it could not answer.'"
+          },
+          {
+            "sentence": "[2] many reference answers used in MT-Bench were actually incorrect",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'Inflection AI (2024) noted that many of the reference answers used in MT-Bench were actually incorrect.'"
+          },
+          {
+            "sentence": "[2] providing LLM judges with prompts that include synthetic references improves their overall agreement with human annotators compared to using no reference at all.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'The authors demonstrated that providing LLM Judges with prompts that include synthetic references (i.e., unfiltered LLM-generated sample responses) improves the judges' overall agreement with human annotators compared to using no reference at all.'"
+          },
+          {
+            "sentence": "[2] providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'We show that providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.'"
+          },
+          {
+            "sentence": "[4] EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] states: 'EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models.'"
+          },
+          {
+            "sentence": "[4] Length bias shows preference for longer answers irrespective of correctness or relevance.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Length Bias: Preference for longer answers, irrespective of correctness or relevance.'"
+          },
+          {
+            "sentence": "[4] Concreteness bias favors results with technical terminology, citations, or quantitative detail, which may be spurious.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Concreteness Bias: Favoring results with technical terminology, citations, or quantitative detail, which may be spurious.'"
+          },
+          {
+            "sentence": "[4] Empty reference bias selects responses that hallucinate plausible content when reference information is incomplete.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Empty Reference Bias: Selecting responses that hallucinate plausible content when reference information is incomplete.'"
+          },
+          {
+            "sentence": "[4] Content continuation bias rewards answers that continue or expand previous input text even if that is not the intended task.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Content Continuation Bias: Rewarding answers that continue or expand previous input text even if that is not the intended task.'"
+          },
+          {
+            "sentence": "[4] Nested instruction bias focuses on sub-instructions within prompts rather than the stated main task.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Nested Instruction Bias: Focusing on sub-instructions within prompts rather than the stated main task.'"
+          },
+          {
+            "sentence": "[4] Familiar knowledge bias chooses outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists 'Familiar Knowledge Bias: Choosing outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.'"
+          },
+          {
+            "sentence": "[5] Scoring bias is defined as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations.",
+            "cited": [
+              5
+            ],
+            "verdict": "supported",
+            "reason": "Source [5] states: 'we first formally define scoring bias as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations.'"
+          },
+          {
+            "sentence": "[5] The scoring stability of LLM judges is significantly disrupted by biases related to score rubrics, score IDs, and reference answer selection.",
+            "cited": [
+              5
+            ],
+            "verdict": "supported",
+            "reason": "Source [5] states: 'our findings offer actionable insights for designing more robust scoring prompts and mitigating biases related to score rubrics, score IDs, and reference answer selection.' The abstract also states: 'Our experiments reveal that the scoring stability of LLM judges is significantly disrupted by these biases.'"
+          },
+          {
+            "sentence": "[6] Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.'"
+          },
+          {
+            "sentence": "[6] Adaptivity failure is a failure mode where a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing, leading to incorrect evaluation of domain-specific tasks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] describes adaptivity failure: 'Here, a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing. The evaluation criteria that predict human preference in conversation do not transfer cleanly to domain-specific tasks.'"
+          },
+          {
+            "sentence": "[6] Non-semantic bias is a failure mode where position, length, formatting, and model provenance shape the verdict in ways unrelated to actual content quality.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] describes non-semantic bias: 'The bias does not come from what the judge reads; it comes from how the response looks. Position, length, formatting, and model provenance all shape the verdict in ways unrelated to actual content quality.'"
+          },
+          {
+            "sentence": "[6] Cross-mode inconsistency is a failure mode where a response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'A response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10.'"
+          },
+          {
+            "sentence": "[6] Score-Comparison Inconsistency leads to circular preference chains where A beats B, B beats C, and C beats A.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'FairJudge calls this Score-Comparison Inconsistency, and it leads to circular preference chains where A beats B, B beats C, and C beats A.'"
+          },
+          {
+            "sentence": "[6] Frontier models exceeded 50% error rates on advanced bias tests according to Hongli Zhou and colleagues' JudgeBiasBench.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'Frontier models exceeded 50% error rates on advanced bias tests, according to Hongli Zhou and colleagues' JudgeBiasBench.'"
+          },
+          {
+            "sentence": "No contradictions appear in the source material.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is a meta-commentary on the sources themselves, not a factual claim about the world. It should be skipped per instructions, but is included here as it appears in the report."
+          },
+          {
+            "sentence": "The sources acknowledge that [1] LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks while simultaneously documenting pervasive failure modes, suggesting that aggregate agreement metrics may mask domain-specific and bias-related failures.",
+            "cited": [
+              1
+            ],
+            "verdict": "partial",
+            "reason": "Source [1] does state that LLM judges achieve high agreement with human evaluators, but the report's inference that this 'masks' failures is an interpretation not explicitly stated in source [1]. The sources do document failures, but the causal claim about masking is the report's synthesis."
+          },
+          {
+            "sentence": "The sources do not clarify whether failure rates vary systematically by model size, architecture, or instruction approach beyond the single comparison showing weaker models with better references outperforming stronger models with synthetic references.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is meta-commentary on what the sources do and do not address, which per instructions should be skipped. However, it is factually accurate that the sources provide limited information on this topic."
+          }
+        ],
+        "uncited": [],
+        "review_history": []
+      },
+      "critic": {
+        "metrics": {
+          "cited_sentences": 27,
+          "supported": 25,
+          "partial": 1,
+          "unsupported": 1,
+          "uncited_factual": 0,
+          "total_factual": 27,
+          "sourced_claim_rate": 0.9259259259259259,
+          "citation_support_rate": 0.9259259259259259,
+          "citation_coverage": 1.0
+        },
+        "drafts": 2,
+        "critic_intervened": true,
+        "sources": 6,
+        "contradictions": 0,
+        "unsupported_dropped": 3,
+        "critic_verdict": "accept",
+        "critic_issues": [],
+        "trace": [
+          "verify: 25 claims, 0 contradictions, 3 unsupported",
+          "write: draft 1",
+          "critique: revise (1 issues)",
+          "write: draft 2",
+          "critique: accept (0 issues)",
+          "finalize: accepted clean"
+        ],
+        "report": "## Summary\n\nLLM-as-a-judge evaluation exhibits multiple documented failure modes spanning capability gaps, systematic biases, and inconsistency patterns. While [1] notes that LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks, substantial evidence reveals critical limitations. [2] LLM judges struggle to evaluate math, reasoning, and coding questions, and [2] there is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question. Beyond capability constraints, LLM judges exhibit systematic biases in how they score and compare responses, and [6] no judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.\n\n## Findings\n\n### Capability-Based Failures\n\n[2] LLM judges struggle to evaluate math, reasoning, and coding questions. [2] There is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question, meaning [2] LLM judges will struggle on the subset of questions they could not answer, even if aggregate level statistics might imply a judge has high agreement with human annotators. This limitation persists even when judges appear reliable overall: [2] many reference answers used in MT-Bench were actually incorrect, and [2] providing LLM judges with prompts that include synthetic references improves their overall agreement with human annotators compared to using no reference at all. However, [2] providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.\n\n### Documented Bias Types\n\n[4] EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models. Six distinct bias types have been identified:\n\n- [4] Length bias shows preference for longer answers irrespective of correctness or relevance.\n- [4] Concreteness bias favors results with technical terminology, citations, or quantitative detail, which may be spurious.\n- [4] Empty reference bias selects responses that hallucinate plausible content when reference information is incomplete.\n- [4] Content continuation bias rewards answers that continue or expand previous input text even if that is not the intended task.\n- [4] Nested instruction bias focuses on sub-instructions within prompts rather than the stated main task.\n- [4] Familiar knowledge bias chooses outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.\n\n### Scoring Instability\n\n[5] Scoring bias is defined as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations. [5] The scoring stability of LLM judges is significantly disrupted by biases related to score rubrics, score IDs, and reference answer selection. [6] Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.\n\n### Domain and Task Adaptation Failures\n\n[6] Adaptivity failure is a failure mode where a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing, leading to incorrect evaluation of domain-specific tasks.\n\n### Non-Semantic Influences\n\n[6] Non-semantic bias is a failure mode where position, length, formatting, and model provenance shape the verdict in ways unrelated to actual content quality.\n\n### Comparison Inconsistencies\n\n[6] Cross-mode inconsistency is a failure mode where a response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10. [6] Score-Comparison Inconsistency leads to circular preference chains where A beats B, B beats C, and C beats A.\n\n### Performance on Bias Tests\n\n[6] Frontier models exceeded 50% error rates on advanced bias tests according to Hongli Zhou and colleagues' JudgeBiasBench. [6] No judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.\n\n## Contradictions and Open Questions\n\nNo contradictions appear in the source material. The sources acknowledge that [1] LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks while simultaneously documenting pervasive failure modes, suggesting that aggregate agreement metrics may mask domain-specific and bias-related failures.\n\nThe sources do not clarify whether failure rates vary systematically by model size, architecture, or instruction approach beyond the single comparison showing weaker models with better references outperforming stronger models with synthetic references.\n\n## Sources\n\n[1] Exploring LLM-as-a-Judge - Weights & Biases \u2014 https://wandb.ai/site/articles/exploring-llm-as-a-judge\n\n[2] No Free Labels: Limitations of LLM-as-a-Judge Without Human Grounding \u2014 https://arxiv.org/html/2503.05061v1\n\n[4] EvalBiasBench: Bias Benchmark for Judge Models \u2014 https://www.emergentmind.com/topics/evalbiasbench\n\n[5] Evaluating Scoring Bias in LLM-as-a-Judge \u2014 https://arxiv.org/html/2506.22316v2\n\n[6] LLM-as-a-Judge: Why Frontier Models Fail 50%+ Bias Tests | Adaline \u2014 https://www.adaline.ai/blog/llm-as-a-judge-reliability-bias",
+        "judged": [
+          {
+            "sentence": "LLM-as-a-judge evaluation exhibits multiple documented failure modes spanning capability gaps, systematic biases, and inconsistency patterns.",
+            "cited": [],
+            "verdict": "unsupported",
+            "reason": "This is a summary statement with no citation; it is a characterization of the overall findings rather than a specific factual claim from the sources."
+          },
+          {
+            "sentence": "While [1] notes that LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks, substantial evidence reveals critical limitations.",
+            "cited": [
+              1
+            ],
+            "verdict": "supported",
+            "reason": "Source [1] explicitly states: 'Research has demonstrated that LLM judges can achieve high agreement with human evaluators across diverse tasks, making them a practical tool for teams building and deploying AI systems at scale.'"
+          },
+          {
+            "sentence": "[2] LLM judges struggle to evaluate math, reasoning, and coding questions",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'Zheng et al. (2023) noted that LLM Judges struggle to evaluate math, reasoning, and coding questions.'"
+          },
+          {
+            "sentence": "[2] there is a strong connection between an LLM's ability to correctly answer a question and grade responses to that question.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'We demonstrate a strong connection between an LLM's ability to correctly answer a question and grade responses to that question.'"
+          },
+          {
+            "sentence": "[6] no judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'No judge evaluated by the RAND Corporation's research team was uniformly reliable across benchmarks.'"
+          },
+          {
+            "sentence": "[2] LLM judges will struggle on the subset of questions they could not answer, even if aggregate level statistics might imply a judge has high agreement with human annotators.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'Although aggregate level statistics might imply a judge has high agreement with human annotators, it will struggle on the subset of questions it could not answer.'"
+          },
+          {
+            "sentence": "[2] many reference answers used in MT-Bench were actually incorrect",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'Inflection AI (2024) noted that many of the reference answers used in MT-Bench were actually incorrect.'"
+          },
+          {
+            "sentence": "[2] providing LLM judges with prompts that include synthetic references improves their overall agreement with human annotators compared to using no reference at all.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] states: 'Zheng et al. (2023)... demonstrated that providing LLM Judges with prompts that include synthetic references (i.e., unfiltered LLM-generated sample responses) improves the judges' overall agreement with human annotators compared to using no reference at all.'"
+          },
+          {
+            "sentence": "[2] providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.",
+            "cited": [
+              2
+            ],
+            "verdict": "supported",
+            "reason": "Source [2] abstract states: 'We show that providing a weaker judge (e.g. Qwen 2.5 7B) with higher quality references reaches better agreement with human annotators than a stronger judge (e.g. GPT-4o) with synthetic references.'"
+          },
+          {
+            "sentence": "[4] EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] states: 'EvalBiasBench is a specialized benchmark suite of 80 hand-crafted test cases designed to diagnose biases in LLM-based judge models.'"
+          },
+          {
+            "sentence": "[4] Length bias shows preference for longer answers irrespective of correctness or relevance.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists as a bias type: 'Length Bias: Preference for longer answers, irrespective of correctness or relevance.'"
+          },
+          {
+            "sentence": "[4] Concreteness bias favors results with technical terminology, citations, or quantitative detail, which may be spurious.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists: 'Concreteness Bias: Favoring results with technical terminology, citations, or quantitative detail, which may be spurious.'"
+          },
+          {
+            "sentence": "[4] Empty reference bias selects responses that hallucinate plausible content when reference information is incomplete.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists: 'Empty Reference Bias: Selecting responses that hallucinate plausible content when reference information is incomplete.'"
+          },
+          {
+            "sentence": "[4] Content continuation bias rewards answers that continue or expand previous input text even if that is not the intended task.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists: 'Content Continuation Bias: Rewarding answers that continue or expand previous input text even if that is not the intended task.'"
+          },
+          {
+            "sentence": "[4] Nested instruction bias focuses on sub-instructions within prompts rather than the stated main task.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists: 'Nested Instruction Bias: Focusing on sub-instructions within prompts rather than the stated main task.'"
+          },
+          {
+            "sentence": "[4] Familiar knowledge bias chooses outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.",
+            "cited": [
+              4
+            ],
+            "verdict": "supported",
+            "reason": "Source [4] lists: 'Familiar Knowledge Bias: Choosing outputs that echo frequently seen knowledge or idioms, despite reduced precision with respect to the instruction.'"
+          },
+          {
+            "sentence": "[5] Scoring bias is defined as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations.",
+            "cited": [
+              5
+            ],
+            "verdict": "supported",
+            "reason": "Source [5] states: 'we first formally define scoring bias as the discrepancy in scores when the judge model's prompt is exposed to bias-inducing perturbations.'"
+          },
+          {
+            "sentence": "[5] The scoring stability of LLM judges is significantly disrupted by biases related to score rubrics, score IDs, and reference answer selection.",
+            "cited": [
+              5
+            ],
+            "verdict": "supported",
+            "reason": "Source [5] states: 'our findings offer actionable insights for designing more robust scoring prompts and mitigating biases related to score rubrics, score IDs, and reference answer selection.' The abstract also states: 'Our experiments reveal that the scoring stability of LLM judges is significantly disrupted by these biases.'"
+          },
+          {
+            "sentence": "[6] Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'Simple text formatting changes disrupted consistency among judges who passed standard accuracy checks.'"
+          },
+          {
+            "sentence": "[6] Adaptivity failure is a failure mode where a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing, leading to incorrect evaluation of domain-specific tasks.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] describes adaptivity failure: 'Here, a judge prompted for general chat quality applies the same rubric to code review, medical summarization, and creative writing. The evaluation criteria that predict human preference in conversation do not transfer cleanly to domain-specific tasks.'"
+          },
+          {
+            "sentence": "[6] Non-semantic bias is a failure mode where position, length, formatting, and model provenance shape the verdict in ways unrelated to actual content quality.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] describes non-semantic bias: 'The bias does not come from what the judge reads; it comes from how the response looks. Position, length, formatting, and model provenance all shape the verdict in ways unrelated to actual content quality.'"
+          },
+          {
+            "sentence": "[6] Cross-mode inconsistency is a failure mode where a response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'A response rated 8 out of 10 in pointwise scoring can still lose a direct pairwise comparison with a response rated 7 out of 10.'"
+          },
+          {
+            "sentence": "[6] Score-Comparison Inconsistency leads to circular preference chains where A beats B, B beats C, and C beats A.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'FairJudge calls this Score-Comparison Inconsistency, and it leads to circular preference chains where A beats B, B beats C, and C beats A.'"
+          },
+          {
+            "sentence": "[6] Frontier models exceeded 50% error rates on advanced bias tests according to Hongli Zhou and colleagues' JudgeBiasBench.",
+            "cited": [
+              6
+            ],
+            "verdict": "supported",
+            "reason": "Source [6] states: 'Frontier models exceeded 50% error rates on advanced bias tests, according to Hongli Zhou and colleagues' JudgeBiasBench.'"
+          },
+          {
+            "sentence": "No contradictions appear in the source material.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is a meta-commentary on the sources themselves, not a factual claim about the world. It is appropriate to skip per the rules."
+          },
+          {
+            "sentence": "The sources acknowledge that [1] LLM-as-a-judge has achieved high agreement with human evaluators across diverse tasks while simultaneously documenting pervasive failure modes, suggesting that aggregate agreement metrics may mask domain-specific and bias-related failures.",
+            "cited": [
+              1
+            ],
+            "verdict": "partial",
+            "reason": "Source [1] does state that LLM judges achieve high agreement with human evaluators, but the claim that this 'masks domain-specific and bias-related failures' is an inference/interpretation not explicitly stated in source [1]. The other sources document failures, but this specific characterization of masking is not directly supported."
+          },
+          {
+            "sentence": "The sources do not clarify whether failure rates vary systematically by model size, architecture, or instruction approach beyond the single comparison showing weaker models with better references outperforming stronger models with synthetic references.",
+            "cited": [],
+            "verdict": "supported",
+            "reason": "This is meta-commentary on what the sources do and do not address, which is appropriate per the rules."
+          }
+        ],
+        "uncited": [],
+        "review_history": [
+          {
+            "verdict": "revise",
+            "issues": [
+              "The Sources section lists [3] (Braintrust article on LLM-as-a-judge) but this source is never cited anywhere in the report. Per the instructions, the Sources section must not list sources that were not used in the report."
+            ]
+          },
+          {
+            "verdict": "accept",
+            "issues": []
+          }
+        ]
+      },
+      "treatment_delta": -0.03703703703703698,
+      "placebo_delta": 0.0
+    }
+  ]
+}

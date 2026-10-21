@@ -78,3 +78,5 @@ class ResearchState(TypedDict, total=False):
 
     sources: Annotated[list[Source], operator.add]
     trace: Annotated[list[str], operator.add]
+    reviews: Annotated[list[Review], operator.add]
+    drafts: Annotated[list[str], operator.add]

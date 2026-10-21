@@ -1,0 +1,24 @@
+questions:
+  - id: q01
+    question: What are the main technical approaches to detecting model drift in production ML systems?
+    expects_contradiction: false
+
+  - id: q02
+    question: How does QLoRA compare to full fine-tuning in downstream task performance?
+    expects_contradiction: true
+
+  - id: q03
+    question: What is the evidence that retrieval-augmented generation reduces hallucination?
+    expects_contradiction: true
+
+  - id: q04
+    question: What are the documented failure modes of LLM-as-a-judge evaluation?
+    expects_contradiction: false
+
+  - id: q05
+    question: Does chain-of-thought prompting improve arithmetic reasoning accuracy for small models?
+    expects_contradiction: true
+
+  - id: q06
+    question: What are the tradeoffs between pure vector search and hybrid search for enterprise retrieval?
+    expects_contradiction: false
