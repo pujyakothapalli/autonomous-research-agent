@@ -110,6 +110,9 @@ draft, so both versions produced identical reports and scored identically —
 exactly 0.0% difference every time. That exactness is useful: it shows the setup
 is clean, with no leakage between the two versions.
 
+Example output: [a clean run](reports/sample-clean.md) and
+[one the critic never accepted](reports/sample-unresolved.md).
+
 Full results, down to per-sentence judgments:
 [`evals/results/`](evals/results/).
 
